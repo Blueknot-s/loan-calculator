@@ -4,19 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대출 이자 계산기 | 원리금 균등·원금 균등·만기일시 계산기 무료 이용</title>
-    <meta name="description" content="대출 이자 계산기 무료 제공! 원리금 균등상환, 원금 균등상환, 만기일시상환 방식별 이자 계산과 이자 줄이는 방법까지 한번에 확인하세요!">
+    <title>대출 이자 계산기 | 원리금 균등·원금 균등·만기일시 계산기</title>
 </head>
 <body>
     <h1>대출 이자 계산기</h1>
-    <p>대출 금액, 이자율, 기간을 입력하고 상환 방식을 선택해보세요.</p>
-    <div id="calculator">
-        <!-- 대출 이자 계산기 소스 영역 -->
-        <p>계산기 기능이 여기에 구현됩니다.</p>
+    <p>대출 금액, 이자율, 기간을 입력 후 상환 방식을 선택해 결과를 확인하세요.</p>
+    <div>
+        대출 금액: <input type="number" id="amount"><br>
+        연 이자율(%): <input type="number" id="rate"><br>
+        대출 기간(년): <input type="number" id="years"><br>
+        <select id="method">
+            <option value="equalPrincipalAndInterest">원리금 균등상환</option>
+            <option value="equalPrincipal">원금 균등상환</option>
+            <option value="bulletRepayment">만기일시상환</option>
+        </select><br>
+        <button onclick="calculate()">계산하기</button>
     </div>
+    <div id="result" style="margin-top:20px;"></div>
+
     <script>
-    // 예시 계산기 로직
-    document.getElementById('calculator').innerHTML = '<p>원리금 균등상환, 원금 균등상환, 만기일시상환 계산 기능 포함 예정</p>';
+    function calculate() {
+        const amount = parseFloat(document.getElementById('amount').value);
+        const rate = parseFloat(document.getElementById('rate').value) / 100 / 12;
+        const years = parseFloat(document.getElementById('years').value) * 12;
+        const method = document.getElementById('method').value;
+
+        let result = '';
+
+        if (method === 'equalPrincipalAndInterest') {
+            const monthly = (amount * rate * Math.pow(1 + rate, years)) / (Math.pow(1 + rate, years) - 1);
+            const totalPayment = monthly * years;
+            const interest = totalPayment - amount;
+            result = `월 납입금: ${monthly.toFixed(0)} 원<br>총 이자: ${interest.toFixed(0)} 원<br>총 상환금액: ${totalPayment.toFixed(0)} 원`;
+        } else if (method === 'equalPrincipal') {
+            const principalPayment = amount / years;
+            const totalInterest = ((amount * rate + principalPayment * rate) / 2) * years;
+            const totalPayment = amount + totalInterest;
+            result = `총 이자: ${totalInterest.toFixed(0)} 원<br>총 상환금액: ${totalPayment.toFixed(0)} 원`;
+        } else if (method === 'bulletRepayment') {
+            const totalInterest = amount * rate * years;
+            const totalPayment = amount + totalInterest;
+            result = `총 이자: ${totalInterest.toFixed(0)} 원<br>총 상환금액: ${totalPayment.toFixed(0)} 원`;
+        }
+
+        document.getElementById('result').innerHTML = result;
+    }
     </script>
 </body>
 </html>
